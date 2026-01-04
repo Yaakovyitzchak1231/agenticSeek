@@ -24,6 +24,8 @@
 
 * 🎙️ Voice-Enabled - Clean, fast, futuristic voice and speech to text allowing you to talk to it like it's your personal AI from a sci-fi movie. (In progress)
 
+* 💬 **Dual Interface Modes** - Simple ChatGPT-like interface for easy interaction, or Advanced mode with full developer tools and real-time monitoring.
+
 ### **Demo**
 
 > *Can you search for the agenticSeek project, learn what skills are required, then open the CV_candidates.zip and then tell me which match best the project*
@@ -312,6 +314,15 @@ Use the CLI: `uv run cli.py`
 ## Usage
 
 Make sure the services are up and running with `./start_services.sh full` and go to `localhost:3000` for web interface.
+
+### Web Interface
+
+AgenticSeek offers two interface modes:
+
+- **💬 Simple Mode** (Default): Clean, ChatGPT-like interface perfect for everyday interactions. Focus on the conversation without distractions.
+- **🔧 Advanced Mode**: Full developer experience with dual-pane layout showing real-time code editing and browser automation.
+
+Switch between modes using the button in the top-right corner. See [Interface Guide](./docs/INTERFACE.md) for details.
 
 You can also use speech to text by setting `listen = True` in the config. Only for CLI mode.
 
