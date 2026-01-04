@@ -38,6 +38,14 @@ Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.z
 
 > 🙏 This project started as a side-project and has zero roadmap and zero funding. It's grown way beyond what I expected by ending in GitHub Trending. Contributions, feedback, and patience are deeply appreciated.
 
+## 🚀 Quick Start
+
+**Want to try it now?** See [ACCESS.md](./ACCESS.md) for the fastest way to get started:
+
+- **Local (2 min)**: Run `./start_services.sh full` → Visit `http://localhost:3000`
+- **Cloud (5 min)**: One-click deploy to Railway.app or use our quick-deploy script
+- **Production**: Full deployment guides for AWS, GCP, Azure in [DEPLOYMENT.md](./DEPLOYMENT.md)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following software installed:
