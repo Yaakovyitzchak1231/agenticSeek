@@ -1,6 +1,14 @@
 # Easy Access Guide - Get Started in 5 Minutes
 
-This guide helps you access AgenticSeek quickly, whether locally or in the cloud.
+**Choose your path based on how quickly you want to get started:**
+
+| Method | Time | Best For | Cost |
+|--------|------|----------|------|
+| 🖥️ **[Local](#-fastest-way-run-locally-2-minutes)** | 2 min | Testing, development | FREE |
+| ☁️ **[Cloud VM](#option-b-deploy-to-your-own-vm-10-minutes)** | 5 min | Production, custom setup | $25-30/mo |
+| 🚀 **[One-Click](#option-a-one-click-cloud-deployment-recommended)** | 5 min | Easy production | $5/mo free tier |
+
+---
 
 ## 🚀 Fastest Way: Run Locally (2 minutes)
 
