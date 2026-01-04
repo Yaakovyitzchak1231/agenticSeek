@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-pvc
+  namespace: agenticseeek
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard  # Change this based on your cloud provider
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: workspace-pvc
+  namespace: agenticseeek
+spec:
+  accessModes:
+    - ReadWriteMany  # Needed if multiple backend pods access workspace
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: standard  # Change this based on your cloud provider
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: searxng-config-pvc
+  namespace: agenticseeek
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard  # Change this based on your cloud provider

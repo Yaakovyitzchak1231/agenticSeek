@@ -405,6 +405,70 @@ Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
 ---
 
+## **Cloud Deployment**
+
+Want to deploy AgenticSeek to the cloud for production use? We provide comprehensive deployment guides and configurations.
+
+### Quick Options
+
+1. **Docker Compose Production**: Deploy to any cloud VM (AWS EC2, GCP Compute Engine, Azure VM)
+   - Uses `docker-compose.prod.yml` with production optimizations
+   - Includes health checks, restart policies, and proper logging
+   - See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions
+
+2. **Kubernetes**: Deploy to managed Kubernetes services (GKE, EKS, AKS)
+   - Production-ready manifests in `k8s/` directory
+   - Supports auto-scaling, load balancing, and high availability
+   - Includes ingress configuration for SSL/TLS
+   - See [DEPLOYMENT.md](./DEPLOYMENT.md) and [k8s/README.md](./k8s/README.md)
+
+### Key Features for Cloud Deployment
+
+- ✅ Production-optimized Docker images with multi-stage builds
+- ✅ Health checks and readiness probes
+- ✅ Persistent storage configuration
+- ✅ SSL/TLS support with automatic certificate management
+- ✅ Horizontal pod autoscaling (Kubernetes)
+- ✅ Resource limits and requests
+- ✅ Secure secret management
+- ✅ Comprehensive deployment scripts
+
+### Quick Start (Cloud VM)
+
+```bash
+# Clone and configure
+git clone https://github.com/Fosowl/agenticSeek.git
+cd agenticSeek
+cp .env.prod.example .env
+nano .env  # Configure your settings
+
+# Deploy with Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Quick Start (Kubernetes)
+
+```bash
+# Build and push images
+export USERNAME=yourusername
+./scripts/build-and-push.sh
+
+# Configure and deploy
+# Edit k8s/00-namespace.yaml with your secrets
+# Edit k8s/04-backend.yaml and k8s/05-frontend.yaml with your image names
+./scripts/deploy-k8s.sh
+```
+
+📖 **Full documentation**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for:
+- Step-by-step cloud deployment guides (AWS, GCP, Azure)
+- SSL certificate setup
+- Domain configuration
+- Monitoring and maintenance
+- Troubleshooting
+- Cost optimization tips
+
+---
+
 ## Speech to Text
 
 Warning: speech to text only work in CLI mode at the moment.
