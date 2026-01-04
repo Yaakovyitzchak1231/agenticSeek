@@ -245,6 +245,16 @@ body {
   box-shadow: 0 8px 25px rgba(36, 41, 46, 0.3);
 }
 
+.action-button.view-mode-btn {
+  font-size: 0.875rem;
+}
+
+.action-button.view-mode-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
 .action-text {
   font-size: 0.8rem;
   font-weight: 600;
