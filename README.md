@@ -24,6 +24,8 @@
 
 * 🎙️ Voice-Enabled - Clean, fast, futuristic voice and speech to text allowing you to talk to it like it's your personal AI from a sci-fi movie. (In progress)
 
+* 💬 **Dual Interface Modes** - Simple ChatGPT-like interface for easy interaction, or Advanced mode with full developer tools and real-time monitoring.
+
 ### **Demo**
 
 > *Can you search for the agenticSeek project, learn what skills are required, then open the CV_candidates.zip and then tell me which match best the project*
@@ -35,6 +37,14 @@ Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.z
 > 🛠⚠️️ **Active Work in Progress**
 
 > 🙏 This project started as a side-project and has zero roadmap and zero funding. It's grown way beyond what I expected by ending in GitHub Trending. Contributions, feedback, and patience are deeply appreciated.
+
+## 🚀 Quick Start
+
+**Want to try it now?** See [ACCESS.md](./ACCESS.md) for the fastest way to get started:
+
+- **Local (2 min)**: Run `./start_services.sh full` → Visit `http://localhost:3000`
+- **Cloud (5 min)**: One-click deploy to Railway.app or use our quick-deploy script
+- **Production**: Full deployment guides for AWS, GCP, Azure in [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## Prerequisites
 
@@ -313,6 +323,15 @@ Use the CLI: `uv run cli.py`
 
 Make sure the services are up and running with `./start_services.sh full` and go to `localhost:3000` for web interface.
 
+### Web Interface
+
+AgenticSeek offers two interface modes:
+
+- **💬 Simple Mode** (Default): Clean, ChatGPT-like interface perfect for everyday interactions. Focus on the conversation without distractions.
+- **🔧 Advanced Mode**: Full developer experience with dual-pane layout showing real-time code editing and browser automation.
+
+Switch between modes using the button in the top-right corner. See [Interface Guide](./docs/INTERFACE.md) for details.
+
 You can also use speech to text by setting `listen = True` in the config. Only for CLI mode.
 
 To exit, simply say/type `goodbye`.
@@ -402,6 +421,70 @@ provider_server_address = http://x.x.x.x:3333
 
 
 Next step: [Start services and run AgenticSeek](#Start-services-and-Run)  
+
+---
+
+## **Cloud Deployment**
+
+Want to deploy AgenticSeek to the cloud for production use? We provide comprehensive deployment guides and configurations.
+
+### Quick Options
+
+1. **Docker Compose Production**: Deploy to any cloud VM (AWS EC2, GCP Compute Engine, Azure VM)
+   - Uses `docker-compose.prod.yml` with production optimizations
+   - Includes health checks, restart policies, and proper logging
+   - See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions
+
+2. **Kubernetes**: Deploy to managed Kubernetes services (GKE, EKS, AKS)
+   - Production-ready manifests in `k8s/` directory
+   - Supports auto-scaling, load balancing, and high availability
+   - Includes ingress configuration for SSL/TLS
+   - See [DEPLOYMENT.md](./DEPLOYMENT.md) and [k8s/README.md](./k8s/README.md)
+
+### Key Features for Cloud Deployment
+
+- ✅ Production-optimized Docker images with multi-stage builds
+- ✅ Health checks and readiness probes
+- ✅ Persistent storage configuration
+- ✅ SSL/TLS support with automatic certificate management
+- ✅ Horizontal pod autoscaling (Kubernetes)
+- ✅ Resource limits and requests
+- ✅ Secure secret management
+- ✅ Comprehensive deployment scripts
+
+### Quick Start (Cloud VM)
+
+```bash
+# Clone and configure
+git clone https://github.com/Fosowl/agenticSeek.git
+cd agenticSeek
+cp .env.prod.example .env
+nano .env  # Configure your settings
+
+# Deploy with Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Quick Start (Kubernetes)
+
+```bash
+# Build and push images
+export USERNAME=yourusername
+./scripts/build-and-push.sh
+
+# Configure and deploy
+# Edit k8s/00-namespace.yaml with your secrets
+# Edit k8s/04-backend.yaml and k8s/05-frontend.yaml with your image names
+./scripts/deploy-k8s.sh
+```
+
+📖 **Full documentation**: See [DEPLOYMENT.md](./DEPLOYMENT.md) for:
+- Step-by-step cloud deployment guides (AWS, GCP, Azure)
+- SSL certificate setup
+- Domain configuration
+- Monitoring and maintenance
+- Troubleshooting
+- Cost optimization tips
 
 ---
 

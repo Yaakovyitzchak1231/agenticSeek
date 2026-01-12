@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agenticseeek
+  labels:
+    name: agenticseeek
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agenticseeek-config
+  namespace: agenticseeek
+data:
+  SEARXNG_BASE_URL: "http://searxng-service:8080"
+  REDIS_URL: "redis://redis-service:6379/0"
+  BACKEND_PORT: "7777"
+  UWSGI_WORKERS: "4"
+  UWSGI_THREADS: "4"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agenticseeek-secrets
+  namespace: agenticseeek
+type: Opaque
+stringData:
+  # Replace these with actual values or use external secret management
+  OPENAI_API_KEY: "your-openai-api-key-here"
+  DEEPSEEK_API_KEY: "your-deepseek-api-key-here"
+  OPENROUTER_API_KEY: "your-openrouter-api-key-here"
+  TOGETHER_API_KEY: "your-together-api-key-here"
+  GOOGLE_API_KEY: "your-google-api-key-here"
+  ANTHROPIC_API_KEY: "your-anthropic-api-key-here"
+  HUGGINGFACE_API_KEY: "your-huggingface-api-key-here"
+  SEARXNG_SECRET_KEY: "change-me-to-random-string"

@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: agenticseeek
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: agenticseeek/backend:latest  # Build and push your image to a registry
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7777
+          name: http
+        env:
+        - name: SEARXNG_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: agenticseeek-config
+              key: SEARXNG_BASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: agenticseeek-config
+              key: REDIS_URL
+        - name: BACKEND_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: agenticseeek-config
+              key: BACKEND_PORT
+        - name: WORK_DIR
+          value: "/opt/workspace"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: OPENAI_API_KEY
+              optional: true
+        - name: DEEPSEEK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: DEEPSEEK_API_KEY
+              optional: true
+        - name: OPENROUTER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: OPENROUTER_API_KEY
+              optional: true
+        - name: TOGETHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: TOGETHER_API_KEY
+              optional: true
+        - name: GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: GOOGLE_API_KEY
+              optional: true
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: ANTHROPIC_API_KEY
+              optional: true
+        - name: HUGGINGFACE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: agenticseeek-secrets
+              key: HUGGINGFACE_API_KEY
+              optional: true
+        volumeMounts:
+        - name: workspace
+          mountPath: /opt/workspace
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 7777
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 7777
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 10
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: workspace-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: agenticseeek
+  labels:
+    app: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 7777
+    targetPort: 7777
+    protocol: TCP
+    name: http
+  selector:
+    app: backend

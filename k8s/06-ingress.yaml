@@ -1,0 +1,71 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agenticseeek-ingress
+  namespace: agenticseeek
+  annotations:
+    # For AWS ALB
+    # kubernetes.io/ingress.class: alb
+    # alb.ingress.kubernetes.io/scheme: internet-facing
+    # alb.ingress.kubernetes.io/target-type: ip
+    
+    # For GCP GKE
+    # kubernetes.io/ingress.class: gce
+    # kubernetes.io/ingress.global-static-ip-name: agenticseeek-ip
+    
+    # For nginx ingress controller (common choice)
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # If using cert-manager for SSL
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+spec:
+  tls:
+  - hosts:
+    - agenticseeek.yourdomain.com  # Replace with your domain
+    secretName: agenticseeek-tls
+  rules:
+  - host: agenticseeek.yourdomain.com  # Replace with your domain
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 7777
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+---
+# Optional: Create a separate ingress for SearxNG if you want external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: searxng-ingress
+  namespace: agenticseeek
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - search.yourdomain.com  # Replace with your domain
+    secretName: searxng-tls
+  rules:
+  - host: search.yourdomain.com  # Replace with your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: searxng-service
+            port:
+              number: 8080

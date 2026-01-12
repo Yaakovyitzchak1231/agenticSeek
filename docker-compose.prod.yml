@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  redis:
+    container_name: redis-prod
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 60 1000 --loglevel warning
+    restart: always
+    volumes:
+      - redis-data:/data
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - agentic-seek-net
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  searxng:
+    container_name: searxng-prod
+    image: docker.io/searxng/searxng:latest
+    restart: always
+    ports:
+      - "${SEARXNG_PORT:-8080}:8080"
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-http://localhost:8080/}
+      - SEARXNG_SECRET_KEY=${SEARXNG_SECRET_KEY}
+      - UWSGI_WORKERS=${UWSGI_WORKERS:-4}
+      - UWSGI_THREADS=${UWSGI_THREADS:-4}
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - agentic-seek-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    container_name: frontend-prod
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend.prod
+      args:
+        - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-http://localhost:7777}
+    restart: always
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - agentic-seek-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  backend:
+    container_name: backend-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    restart: always
+    ports:
+      - "${BACKEND_PORT:-7777}:${BACKEND_PORT:-7777}"
+    volumes:
+      - ${WORK_DIR:-.}:/opt/workspace
+      - backend-cache:/root/.cache
+    command: python3 api.py
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-http://searxng:8080}
+      - REDIS_URL=${REDIS_BASE_URL:-redis://redis:6379/0}
+      - WORK_DIR=/opt/workspace
+      - BACKEND_PORT=${BACKEND_PORT:-7777}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - DSK_DEEPSEEK_API_KEY=${DSK_DEEPSEEK_API_KEY}
+    networks:
+      - agentic-seek-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      searxng:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:${BACKEND_PORT:-7777}/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  redis-data:
+  backend-cache:
+
+networks:
+  agentic-seek-net:
+    driver: bridge

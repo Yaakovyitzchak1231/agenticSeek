@@ -1,0 +1,66 @@
+services:
+  # Frontend Service
+  - type: web
+    name: agenticseeek-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile.frontend.prod
+    dockerContext: ./frontend
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://agenticseeek-backend.onrender.com
+    healthCheckPath: /health
+
+  # Backend Service
+  - type: web
+    name: agenticseeek-backend
+    env: docker
+    dockerfilePath: ./Dockerfile.backend
+    dockerContext: .
+    envVars:
+      - key: SEARXNG_BASE_URL
+        value: https://agenticseeek-searxng.onrender.com
+      - key: REDIS_URL
+        value: redis://agenticseeek-redis:6379/0
+      - key: WORK_DIR
+        value: /opt/workspace
+      - key: BACKEND_PORT
+        value: 7777
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+    healthCheckPath: /health
+
+  # Redis Service
+  - type: pserv
+    name: agenticseeek-redis
+    env: docker
+    dockerImage: valkey/valkey:8-alpine
+    disk:
+      name: redis-data
+      mountPath: /data
+      sizeGB: 5
+
+  # SearxNG Service
+  - type: web
+    name: agenticseeek-searxng
+    env: docker
+    dockerImage: searxng/searxng:latest
+    envVars:
+      - key: SEARXNG_BASE_URL
+        value: https://agenticseeek-searxng.onrender.com
+      - key: SEARXNG_SECRET_KEY
+        generateValue: true
+      - key: UWSGI_WORKERS
+        value: 4
+      - key: UWSGI_THREADS
+        value: 4
+    disk:
+      name: searxng-config
+      mountPath: /etc/searxng
+      sizeGB: 1
+    healthCheckPath: /healthz

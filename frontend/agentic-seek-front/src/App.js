@@ -4,6 +4,7 @@ import axios from "axios";
 import "./App.css";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { ResizableLayout } from "./components/ResizableLayout";
+import { SimpleChatView } from "./components/SimpleChatView";
 import faviconPng from "./logo.png";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -19,6 +20,7 @@ function App() {
   const [isOnline, setIsOnline] = useState(false);
   const [status, setStatus] = useState("Agents ready");
   const [expandedReasoning, setExpandedReasoning] = useState(new Set());
+  const [viewMode, setViewMode] = useState("simple"); // "simple" or "advanced"
   const messagesEndRef = useRef(null);
 
   const fetchLatestAnswer = useCallback(async () => {
@@ -222,6 +224,15 @@ function App() {
           </div>
         </div>
         <div className="header-actions">
+          <button
+            className="action-button view-mode-btn"
+            onClick={() => setViewMode(viewMode === "simple" ? "advanced" : "simple")}
+            title={viewMode === "simple" ? "Switch to Advanced View" : "Switch to Simple View"}
+          >
+            <span className="action-text">
+              {viewMode === "simple" ? "🔧 Advanced" : "💬 Simple"}
+            </span>
+          </button>
           <a
             href="https://github.com/Fosowl/agenticSeek"
             target="_blank"
@@ -239,7 +250,21 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="main">
+      <main className="main">{viewMode === "simple" ? (
+          <SimpleChatView
+            messages={messages}
+            query={query}
+            setQuery={setQuery}
+            isLoading={isLoading}
+            isOnline={isOnline}
+            status={status}
+            handleSubmit={handleSubmit}
+            handleStop={handleStop}
+            expandedReasoning={expandedReasoning}
+            toggleReasoning={toggleReasoning}
+            messagesEndRef={messagesEndRef}
+          />
+        ) : (
         <ResizableLayout initialLeftWidth={50}>
           <div className="chat-section">
             <h2>Chat Interface</h2>
@@ -409,6 +434,7 @@ function App() {
             </div>
           </div>
         </ResizableLayout>
+        )}
       </main>
     </div>
   );
